@@ -1,117 +1,100 @@
-
 import { TrainingCenter, Rating } from "../types";
+import axios from "axios";
 
-// Local storage keys
-const CENTERS_KEY = "training-centers";
-const RATINGS_KEY = "training-center-ratings";
-
-// Generate a unique ID
-export const generateId = (): string => {
-  return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
-};
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 // Get all training centers
-export const getCenters = (): TrainingCenter[] => {
-  const centers = localStorage.getItem(CENTERS_KEY);
-  return centers ? JSON.parse(centers) : [];
+export const getCenters = async (): Promise<TrainingCenter[]> => {
+  try {
+    const response = await axios.get(`${API_BASE_URL}/trainingcenters`);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching centers:", error);
+    return [];
+  }
 };
 
 // Add a training center
-export const addCenter = (center: Omit<TrainingCenter, "id" | "createdAt" | "createdBy">): TrainingCenter => {
-  const centers = getCenters();
-  
-  const newCenter: TrainingCenter = {
-    ...center,
-    id: generateId(),
-    createdAt: Date.now(),
-    createdBy: "user-1", // Simulating a user ID
-  };
-  
-  localStorage.setItem(CENTERS_KEY, JSON.stringify([...centers, newCenter]));
-  return newCenter;
-};
+// export const addCenter = async (
+//   center: Omit<TrainingCenter, "id" | "createdAt" | "createdBy">
+// ): Promise<TrainingCenter> => {
+//   try {
+//     const response = await axios.post(
+//       `${API_BASE_URL}/trainingcenters`,
+//       center
+//     );
+//     return response.data;
+//   } catch (error) {
+//     console.error("Error adding center:", error);
+//     throw error;
+//   }
+// };
 
 // Update a training center
-export const updateCenter = (center: TrainingCenter): TrainingCenter => {
-  const centers = getCenters();
-  const updatedCenters = centers.map(c => c.id === center.id ? center : c);
-  localStorage.setItem(CENTERS_KEY, JSON.stringify(updatedCenters));
-  return center;
-};
+// export const updateCenter = async (
+//   center: TrainingCenter
+// ): Promise<TrainingCenter> => {
+//   try {
+//     const response = await axios.put(
+//       `${API_BASE_URL}/trainingcenters/${center.id}`,
+//       center
+//     );
+//     return response.data;
+//   } catch (error) {
+//     console.error("Error updating center:", error);
+//     throw error;
+//   }
+// };
 
 // Delete a training center
-export const deleteCenter = (id: string): void => {
-  const centers = getCenters();
-  const filteredCenters = centers.filter(center => center.id !== id);
-  localStorage.setItem(CENTERS_KEY, JSON.stringify(filteredCenters));
-  
-  // Also remove all associated ratings
-  const ratings = getRatings();
-  const filteredRatings = ratings.filter(rating => rating.centerId !== id);
-  localStorage.setItem(RATINGS_KEY, JSON.stringify(filteredRatings));
-};
+// export const deleteCenter = async (id: string): Promise<void> => {
+//   try {
+//     await axios.delete(`${API_BASE_URL}/trainingcenters/${id}`);
+//   } catch (error) {
+//     console.error("Error deleting center:", error);
+//     throw error;
+//   }
+// };
 
-// Get all ratings
-export const getRatings = (): Rating[] => {
-  const ratings = localStorage.getItem(RATINGS_KEY);
-  return ratings ? JSON.parse(ratings) : [];
-};
-
-// Add a rating
-export const addRating = (centerId: string, rating: number): Rating => {
-  const ratings = getRatings();
-  
-  // Check if user already rated this center
-  const existingRatingIndex = ratings.findIndex(
-    r => r.centerId === centerId && r.userId === "user-1"
-  );
-  
-  const newRating: Rating = {
-    id: generateId(),
-    centerId,
-    rating,
-    userId: "user-1", // Simulating a user ID
-    createdAt: Date.now(),
-  };
-  
-  if (existingRatingIndex >= 0) {
-    // Update existing rating
-    ratings[existingRatingIndex] = newRating;
-  } else {
-    // Add new rating
-    ratings.push(newRating);
+// Get ratings
+export const getRatings = async (centerId: string): Promise<Rating[]> => {
+  try {
+    const response = await axios.get(
+      `${API_BASE_URL}/ratings/center/${centerId}`
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching ratings:", error);
+    return [];
   }
-  
-  localStorage.setItem(RATINGS_KEY, JSON.stringify(ratings));
-  return newRating;
 };
 
-// Get average rating for a center
-export const getAverageRating = (centerId: string): number => {
-  const ratings = getRatings();
-  const centerRatings = ratings.filter(rating => rating.centerId === centerId);
-  
-  if (centerRatings.length === 0) {
+// Add rating
+export const addRating = async (
+  centerId: string,
+  rating: number
+): Promise<Rating> => {
+  try {
+    const response = await axios.post(`${API_BASE_URL}/ratings`, {
+      centerId,
+      rating,
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error adding rating:", error);
+    throw error;
+  }
+};
+
+// Get average rating
+export const getAverageRating = async (centerId: string): Promise<number> => {
+  try {
+    const response = await axios.get(
+      `${API_BASE_URL}/ratings/center/${centerId}/average`
+    );
+    return response.data.averageRating;
+  } catch (error) {
+    console.error("Error fetching average rating:", error);
     return 0;
   }
-  
-  const sum = centerRatings.reduce((total, rating) => total + rating.rating, 0);
-  return Math.round((sum / centerRatings.length) * 10) / 10; // Round to 1 decimal
-};
-
-// Get user's rating for a center
-export const getUserRating = (centerId: string): number | null => {
-  const ratings = getRatings();
-  const userRating = ratings.find(
-    rating => rating.centerId === centerId && rating.userId === "user-1"
-  );
-  
-  return userRating ? userRating.rating : null;
-};
-
-// Delete a rating
-export const deleteRating = (id: string): void => {
-  const ratings = getRatings();
-  const filteredRatings = ratings.filter(rating => rating.id !== id);
-  localStorage.setItem(RATINGS_KEY, JSON.stringify(filteredRatings));
 };
