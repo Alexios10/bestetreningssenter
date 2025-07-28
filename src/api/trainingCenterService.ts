@@ -22,6 +22,3 @@ export const getTrainingCenterById = async (
   const data = await handleResponse(response);
   return data as TrainingCenter;
 };
-
-// Since you mentioned centers are read-only for users,
-// we're not implementing create/update/delete methods

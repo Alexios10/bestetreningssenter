@@ -26,39 +26,40 @@ import { useAuthModal } from "@/hooks/useAuthModal";
 interface TrainingCenterCardProps {
   center: TrainingCenter;
   onDelete: () => void;
+  averageRating: number;
+  userRating: number | null;
+  onRate: (rating: number) => void;
 }
 
 const TrainingCenterCard: React.FC<TrainingCenterCardProps> = ({
   center,
   onDelete,
+  averageRating: initialAverageRating,
+  userRating: initialUserRating,
+  onRate: propOnRate,
 }) => {
-  // Ratings state
-
   const { user } = useAuth();
+  const [averageRating, setAverageRating] =
+    useState<number>(initialAverageRating);
+  const [ratingCount, setRatingCount] = useState<number>(0);
+  const [userRating, setUserRating] = useState<number | null>(
+    initialUserRating
+  );
 
   useEffect(() => {
     fetchRatings();
     // eslint-disable-next-line
   }, [center.id, user?.id]);
-  // Ratings state
-  const [averageRating, setAverageRating] = useState<number>(0);
-  const [ratingCount, setRatingCount] = useState<number>(0);
-  const [userRating, setUserRating] = useState<number | null>(null);
-  // Fetch ratings
+
   const fetchRatings = async () => {
     try {
-      const avg = await getAverageRating(center.id);
-      setAverageRating(avg ?? 0);
       const ratings = await getRatingsByCenter(center.id);
       setRatingCount(ratings.length);
       if (user?.id) {
         const userR = await getUserRating(center.id, user.id);
         setUserRating(userR ? userR.rating : null);
-      } else {
-        setUserRating(null);
       }
     } catch (err) {
-      setAverageRating(0);
       setRatingCount(0);
       setUserRating(null);
     }
@@ -73,7 +74,6 @@ const TrainingCenterCard: React.FC<TrainingCenterCardProps> = ({
     setAuthActionCallback,
   } = useAuthModal();
 
-  // const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [expanded, setExpanded] = useState(false);
   const [showCommentsDialog, setShowCommentsDialog] = useState(false);
 
@@ -98,29 +98,21 @@ const TrainingCenterCard: React.FC<TrainingCenterCardProps> = ({
     // eslint-disable-next-line
   }, [center.id]);
 
-  // const handleDeleteClick = () => {
-  //   setShowDeleteConfirm(true);
-  // };
-
-  // const handleConfirmDelete = () => {
-  //   onDelete();
-  //   toast.success("Training center deleted");
-  //   setShowDeleteConfirm(false);
-  // };
-
   const handleRate = async (rating: number) => {
     const canProceed = openAuthModal("vurder dette senteret");
     if (!canProceed) {
       setAuthActionCallback(() => async () => {
         await addOrUpdateRating(center.id, rating);
-        toast.success(`Du ga dette senteret ${rating} stjerner`);
+        propOnRate(rating);
         await fetchRatings();
+        toast.success(`Du ga dette senteret ${rating} stjerner`);
       });
       return;
     }
     await addOrUpdateRating(center.id, rating);
-    toast.success(`Du ga dette senteret ${rating} stjerner`);
+    propOnRate(rating);
     await fetchRatings();
+    toast.success(`Du ga dette senteret ${rating} stjerner`);
   };
 
   const handleAddComment = async (
@@ -227,15 +219,6 @@ const TrainingCenterCard: React.FC<TrainingCenterCardProps> = ({
           <h3 className="text-xl font-semibold text-gray-800 mb-2">
             {center.title}
           </h3>
-          {/* <div className="flex gap-2">
-            <button
-              onClick={handleDeleteClick}
-              className="p-1.5 rounded-full bg-gray-100 text-gray-500 hover:bg-red-100 hover:text-red-600 transition-colors"
-              aria-label="Slett senter"
-            >
-              <Trash size={16} />
-            </button>
-          </div> */}
         </div>
 
         <div className="mb-4 flex items-center justify-between">
@@ -302,28 +285,6 @@ const TrainingCenterCard: React.FC<TrainingCenterCardProps> = ({
           </div>
         </div>
       </div>
-
-      {/* Delete Confirmation Dialog */}
-      {/* <AlertDialog open={showDeleteConfirm} onOpenChange={setShowDeleteConfirm}>
-        <AlertDialogContent className="max-w-md">
-          <AlertDialogHeader>
-            <AlertDialogTitle>Delete training center</AlertDialogTitle>
-            <AlertDialogDescription>
-              Are you sure you want to delete "{center.title}"? This action
-              cannot be undone.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction
-              onClick={handleConfirmDelete}
-              className="bg-red-500 text-white hover:bg-red-600 transition-colors duration-200"
-            >
-              Delete
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog> */}
 
       {/* Comments Dialog */}
       <CommentsDialog

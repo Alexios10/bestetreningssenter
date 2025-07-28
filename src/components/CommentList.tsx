@@ -22,7 +22,7 @@ import {
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Textarea } from "@/components/ui/textarea";
 import CommentItem from "./CommentItem";
-import { getReplies } from "../utils/commentStorage";
+import { getReplies } from "../services/commentService";
 
 interface CommentListProps {
   comments: Comment[];
