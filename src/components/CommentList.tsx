@@ -22,7 +22,7 @@ import {
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Textarea } from "@/components/ui/textarea";
 import CommentItem from "./CommentItem";
-import { getReplies } from "../services/commentService";
+import { getRepliesByComment } from "../api/commentService";
 
 interface CommentListProps {
   comments: Comment[];
@@ -88,7 +88,7 @@ const CommentList: React.FC<CommentListProps> = ({
     // Explicitly fetch replies for each comment
     const replies =
       comment.replies && comment.replies.length > 0
-        ? getReplies(comment.id)
+        ? getRepliesByComment(comment.id)
         : [];
     return { comment, replies };
   });

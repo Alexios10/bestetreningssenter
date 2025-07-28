@@ -39,29 +39,40 @@ const TrainingCenterCard: React.FC<TrainingCenterCardProps> = ({
   onRate: propOnRate,
 }) => {
   const { user } = useAuth();
-  const [averageRating, setAverageRating] =
+  const [localAverageRating, setLocalAverageRating] =
     useState<number>(initialAverageRating);
-  const [ratingCount, setRatingCount] = useState<number>(0);
-  const [userRating, setUserRating] = useState<number | null>(
+  const [localUserRating, setLocalUserRating] = useState<number | null>(
     initialUserRating
   );
+  const [ratingCount, setRatingCount] = useState<number>(0);
+  const [expanded, setExpanded] = useState(false);
+  const [showCommentsDialog, setShowCommentsDialog] = useState(false);
+  const [comments, setComments] = useState<Comment[]>([]);
+  const [loadingComments, setLoadingComments] = useState(false);
+
+  // Update local state when props change
+  useEffect(() => {
+    setLocalAverageRating(initialAverageRating);
+    setLocalUserRating(initialUserRating);
+  }, [initialAverageRating, initialUserRating]);
 
   useEffect(() => {
     fetchRatings();
     // eslint-disable-next-line
   }, [center.id, user?.id]);
 
+  // Fetch ratings for the center
   const fetchRatings = async () => {
     try {
       const ratings = await getRatingsByCenter(center.id);
       setRatingCount(ratings.length);
       if (user?.id) {
         const userR = await getUserRating(center.id, user.id);
-        setUserRating(userR ? userR.rating : null);
+        setLocalUserRating(userR ? userR.rating : null);
       }
     } catch (err) {
       setRatingCount(0);
-      setUserRating(null);
+      setLocalUserRating(null);
     }
   };
 
@@ -73,12 +84,6 @@ const TrainingCenterCard: React.FC<TrainingCenterCardProps> = ({
     authSuccess,
     setAuthActionCallback,
   } = useAuthModal();
-
-  const [expanded, setExpanded] = useState(false);
-  const [showCommentsDialog, setShowCommentsDialog] = useState(false);
-
-  const [comments, setComments] = useState<Comment[]>([]);
-  const [loadingComments, setLoadingComments] = useState(false);
 
   // Fetch comments from backend
   const fetchComments = async () => {
@@ -99,20 +104,19 @@ const TrainingCenterCard: React.FC<TrainingCenterCardProps> = ({
   }, [center.id]);
 
   const handleRate = async (rating: number) => {
-    const canProceed = openAuthModal("vurder dette senteret");
-    if (!canProceed) {
-      setAuthActionCallback(() => async () => {
-        await addOrUpdateRating(center.id, rating);
-        propOnRate(rating);
-        await fetchRatings();
-        toast.success(`Du ga dette senteret ${rating} stjerner`);
-      });
-      return;
+    if (!user) {
+      const canProceed = openAuthModal("vurder dette senteret");
+      if (!canProceed) return;
     }
-    await addOrUpdateRating(center.id, rating);
-    propOnRate(rating);
-    await fetchRatings();
-    toast.success(`Du ga dette senteret ${rating} stjerner`);
+
+    try {
+      await addOrUpdateRating(center.id, rating);
+      setLocalUserRating(rating);
+      await propOnRate(rating);
+      toast.success(`Du ga dette senteret ${rating} stjerner`);
+    } catch (error) {
+      toast.error("Kunne ikke lagre vurderingen");
+    }
   };
 
   const handleAddComment = async (
@@ -223,7 +227,7 @@ const TrainingCenterCard: React.FC<TrainingCenterCardProps> = ({
 
         <div className="mb-4 flex items-center justify-between">
           <div className="flex items-center">
-            <StarRating rating={averageRating} size={18} />
+            <StarRating rating={localAverageRating} size={18} />
             <span className="ml-1 text-sm text-gray-500">({ratingCount})</span>
             {/* <span className="text-xs text-gray-500 ml-2">
               {averageRating > 0
@@ -248,10 +252,10 @@ const TrainingCenterCard: React.FC<TrainingCenterCardProps> = ({
         <div className="border-t border-gray-100 pt-4 mt-2">
           <div className="flex flex-col">
             <span className="text-sm text-gray-600 mb-1">
-              {userRating ? "Din vurdering:" : "Vurder dette senteret:"}
+              {localUserRating ? "Din vurdering:" : "Vurder dette senteret:"}
             </span>
             <StarRating
-              rating={userRating || 0}
+              rating={localUserRating || 0}
               onRatingChange={handleRate}
               interactive={true}
               size={22}

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import TrainingCenterCard from "./TrainingCenterCard";
 import { TrainingCenter } from "../types";
 
@@ -12,11 +12,35 @@ interface TrainingCenterListProps {
 
 const TrainingCenterList: React.FC<TrainingCenterListProps> = ({
   centers,
-  averageRatings,
-  userRatings,
+  averageRatings: initialAverageRatings,
+  userRatings: initialUserRatings,
   onRate,
   onDelete,
 }) => {
+  const [localAverageRatings, setLocalAverageRatings] = useState(
+    initialAverageRatings
+  );
+  const [localUserRatings, setLocalUserRatings] = useState(initialUserRatings);
+
+  const handleRate = async (centerId: string, rating: number) => {
+    await onRate(centerId, rating);
+    // Update local state immediately
+    setLocalUserRatings((prev) => ({
+      ...prev,
+      [centerId]: rating,
+    }));
+
+    // Calculate and update new average
+    const currentAverage = localAverageRatings[centerId] || 0;
+    const newAverage =
+      (currentAverage * Object.keys(localUserRatings).length + rating) /
+      (Object.keys(localUserRatings).length + 1);
+    setLocalAverageRatings((prev) => ({
+      ...prev,
+      [centerId]: newAverage,
+    }));
+  };
+
   if (centers.length === 0) {
     return (
       <div className="text-center py-16">
@@ -43,9 +67,9 @@ const TrainingCenterList: React.FC<TrainingCenterListProps> = ({
         >
           <TrainingCenterCard
             center={center}
-            averageRating={averageRatings[center.id] || 0}
-            userRating={userRatings[center.id] || null}
-            onRate={(rating) => onRate(center.id, rating)}
+            averageRating={localAverageRatings[center.id] || 0}
+            userRating={localUserRatings[center.id] || null}
+            onRate={(rating) => handleRate(center.id, rating)}
             onDelete={() => onDelete(center.id)}
           />
         </div>
