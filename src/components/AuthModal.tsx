@@ -284,8 +284,7 @@ const AuthModal: React.FC<AuthModalProps> = ({
             }
             className="w-full px-4 py-2 bg-white border border-gray-300 rounded hover:bg-gray-50 flex items-center justify-center gap-2"
             // disabled={isLoading}
-            disabled={true} // Temporarily disabled until Google login is implemented
-            type="button"
+            disabled={true} // Temporarily disabled until Google login is fixed
           >
             <img
               src="https://developers.google.com/identity/images/g-logo.png"
