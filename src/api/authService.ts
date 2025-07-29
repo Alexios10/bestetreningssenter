@@ -3,18 +3,15 @@ import { User } from "../contexts/AuthContext";
 import axios from "axios";
 import { toast } from "sonner";
 
-interface AuthResponse {
+interface LoginResponse {
   token: string;
   user: User;
 }
 
-export const setAuthToken = (token: string) => {
-  localStorage.setItem("authToken", token);
-};
-
-export const clearAuthToken = () => {
-  localStorage.removeItem("authToken");
-};
+interface RegisterResponse {
+  token: string;
+  user: User;
+}
 
 export const login = async (email: string, password: string) => {
   const response = await axios.post(
@@ -69,17 +66,5 @@ export const handleResendConfirmation = async (email: string) => {
     toast.success("Confirmation email resent. Please check your inbox.");
   } catch {
     toast.error("Could not resend confirmation email.");
-  }
-};
-
-export const handleGoogleCallback = (token: string) => {
-  try {
-    setAuthToken(token);
-    // You might want to redirect or update UI state here
-    return true;
-  } catch (error) {
-    console.error("Error handling Google callback:", error);
-    clearAuthToken();
-    return false;
   }
 };
