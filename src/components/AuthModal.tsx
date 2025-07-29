@@ -283,8 +283,8 @@ const AuthModal: React.FC<AuthModalProps> = ({
               (window.location.href = `https://trainingcentersapi-production.up.railway.app/api/auth/google-login`)
             }
             className="w-full px-4 py-2 bg-white border border-gray-300 rounded hover:bg-gray-50 flex items-center justify-center gap-2"
-            // disabled={isLoading}
-            disabled={true} // Temporarily disabled until Google login is implemented
+            disabled={isLoading}
+            // disabled={true} // Temporarily disabled until Google login is implemented
             type="button"
           >
             <img
@@ -292,7 +292,7 @@ const AuthModal: React.FC<AuthModalProps> = ({
               alt="Google"
               className="h-5 w-5"
             />
-            Kommer snart
+            Logg inn med Google
           </button>
         </div>
 
