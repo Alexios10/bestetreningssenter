@@ -133,13 +133,6 @@ const AuthModal: React.FC<AuthModalProps> = ({
     }
   };
 
-  const handleGoogleLogin = () => {
-    const authUrl =
-      "https://trainingcentersapi-production.up.railway.app/api/auth/google-login";
-    // Open in same window to avoid popup blockers
-    window.location.href = authUrl;
-  };
-
   return (
     <Dialog open={isOpen} onOpenChange={() => !isLoading && onClose()}>
       <DialogContent className="sm:max-w-md">
@@ -286,9 +279,12 @@ const AuthModal: React.FC<AuthModalProps> = ({
         <div className="mt-4 flex flex-col items-center">
           <span className="text-gray-500 mb-2">eller</span>
           <button
-            onClick={handleGoogleLogin}
+            onClick={() =>
+              (window.location.href = `https://trainingcentersapi-production.up.railway.app/api/auth/google-login`)
+            }
             className="w-full px-4 py-2 bg-white border border-gray-300 rounded hover:bg-gray-50 flex items-center justify-center gap-2"
             disabled={isLoading}
+            // disabled={true} // Temporarily disabled until Google login is implemented
             type="button"
           >
             <img
