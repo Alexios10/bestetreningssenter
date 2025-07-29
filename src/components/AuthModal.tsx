@@ -44,6 +44,9 @@ const AuthModal: React.FC<AuthModalProps> = ({
   const [registerPassword, setRegisterPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
+  // New state variable for the authentication window
+  const [authWindow, setAuthWindow] = useState<Window | null>(null);
+
   // Reset all form fields and tab when modal closes
   useEffect(() => {
     if (!isOpen) {
@@ -74,8 +77,10 @@ const AuthModal: React.FC<AuthModalProps> = ({
     setShowPassword(false);
   }, [activeTab]);
 
+  // Toggle password visibility
   const togglePasswordVisibility = () => setShowPassword(!showPassword);
 
+  // Handle login form submission
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
@@ -94,6 +99,7 @@ const AuthModal: React.FC<AuthModalProps> = ({
     }
   };
 
+  // Handle registration form submission
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -120,6 +126,7 @@ const AuthModal: React.FC<AuthModalProps> = ({
     }
   };
 
+  // Handle resend confirmation email
   const handleResendConfirmation = async () => {
     setIsLoading(true);
     try {
@@ -132,6 +139,44 @@ const AuthModal: React.FC<AuthModalProps> = ({
       setIsLoading(false);
     }
   };
+
+  // Handle Google login
+  const handleGoogleLogin = () => {
+    const width = 500;
+    const height = 600;
+    const left = window.screenX + (window.outerWidth - width) / 2;
+    const top = window.screenY + (window.outerHeight - height) / 2;
+
+    const authWindow = window.open(
+      "https://trainingcentersapi-production.up.railway.app/api/auth/google-login",
+      "Google Login",
+      `width=${width},height=${height},left=${left},top=${top}`
+    );
+
+    setAuthWindow(authWindow);
+  };
+
+  // Listen for authentication result from the popup
+  useEffect(() => {
+    const handleMessage = (event: MessageEvent) => {
+      if (
+        event.origin === "https://trainingcentersapi-production.up.railway.app"
+      ) {
+        if (event.data.type === "auth-success") {
+          // Handle successful authentication
+          toast.success("Innlogging vellykket!");
+          onSuccess?.();
+          onClose();
+        } else if (event.data.type === "auth-error") {
+          toast.error("Innlogging mislyktes");
+        }
+        authWindow?.close();
+      }
+    };
+
+    window.addEventListener("message", handleMessage);
+    return () => window.removeEventListener("message", handleMessage);
+  }, [authWindow]);
 
   return (
     <Dialog open={isOpen} onOpenChange={() => !isLoading && onClose()}>
@@ -279,12 +324,9 @@ const AuthModal: React.FC<AuthModalProps> = ({
         <div className="mt-4 flex flex-col items-center">
           <span className="text-gray-500 mb-2">eller</span>
           <button
-            onClick={() =>
-              (window.location.href = `https://trainingcentersapi-production.up.railway.app/api/auth/google-login`)
-            }
+            onClick={handleGoogleLogin}
             className="w-full px-4 py-2 bg-white border border-gray-300 rounded hover:bg-gray-50 flex items-center justify-center gap-2"
             disabled={isLoading}
-            // disabled={true} // Temporarily disabled until Google login is implemented
             type="button"
           >
             <img
