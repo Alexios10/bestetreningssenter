@@ -279,40 +279,19 @@ const AuthModal: React.FC<AuthModalProps> = ({
         <div className="mt-4 flex flex-col items-center">
           <span className="text-gray-500 mb-2">eller</span>
           <button
-            onClick={() => {
-              const width = 500;
-              const height = 600;
-              const left = window.screenX + (window.outerWidth - width) / 2;
-              const top = window.screenY + (window.outerHeight - height) / 2;
-              const popup = window.open(
-                `https://trainingcentersapi-production.up.railway.app/api/auth/google-login`,
-                "google-login",
-                `width=${width},height=${height},left=${left},top=${top}`
-              );
-
-              if (popup) {
-                const checkPopup = setInterval(() => {
-                  if (popup.closed) {
-                    clearInterval(checkPopup);
-                    // Check if we got a token
-                    const token = localStorage.getItem("authToken");
-                    if (token) {
-                      onSuccess?.();
-                      onClose();
-                    }
-                  }
-                }, 500);
-              }
-            }}
+            onClick={() =>
+              (window.location.href = `https://trainingcentersapi-production.up.railway.app/api/auth/google-login`)
+            }
             className="w-full px-4 py-2 bg-white border border-gray-300 rounded hover:bg-gray-50 flex items-center justify-center gap-2"
-            disabled={isLoading}
+            // disabled={isLoading}
+            disabled={true} // Temporarily disabled until Google login is fixed
           >
             <img
               src="https://developers.google.com/identity/images/g-logo.png"
               alt="Google"
               className="h-5 w-5"
             />
-            Fortsett med Google
+            Kommer snart
           </button>
         </div>
 
