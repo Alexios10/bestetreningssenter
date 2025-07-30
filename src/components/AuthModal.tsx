@@ -283,8 +283,8 @@ const AuthModal: React.FC<AuthModalProps> = ({
               (window.location.href = `https://trainingcentersapi-production.up.railway.app/api/auth/google-login`)
             }
             className="w-full px-4 py-2 bg-white border border-gray-300 rounded hover:bg-gray-50 flex items-center justify-center gap-2"
-            // disabled={isLoading}
-            disabled={true} // Temporarily disabled until Google login is fixed
+            disabled={isLoading}
+            // disabled={true} // Temporarily disabled until Google login is fixed
           >
             <img
               src="https://developers.google.com/identity/images/g-logo.png"
