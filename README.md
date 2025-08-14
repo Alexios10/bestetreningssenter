@@ -1,4 +1,4 @@
-# Training Hub Reviews
+# Bestetreningssenter
 
 ## Project info
 
