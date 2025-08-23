@@ -154,7 +154,7 @@ const AuthModal: React.FC<AuthModalProps> = ({
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
           <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger value="login">Logg in</TabsTrigger>
-            <TabsTrigger value="register">Registrer </TabsTrigger>
+            <TabsTrigger value="register">Registrer</TabsTrigger>
           </TabsList>
 
           <TabsContent value="login" className="mt-4">
@@ -242,6 +242,10 @@ const AuthModal: React.FC<AuthModalProps> = ({
                     minLength={6}
                     className="pr-10"
                   />
+                  <span className="text-gray-400 text-xs ml-1">
+                    Bruk minst 8 tegn, inkludert en stor bokstav, et tall og et
+                    symbol.
+                  </span>
                   <button
                     type="button"
                     className="absolute right-3 top-1/2 transform -translate-y-1/2"
