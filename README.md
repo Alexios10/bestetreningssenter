@@ -5,13 +5,13 @@ Målet er å gjøre det enklere å finne et treningssenter som faktisk passer ti
 
 Hva kan man gjøre foreløpig?
 
-Se informasjon om hvert treningssenter
+• Se informasjon om hvert treningssenter
 
-Legge igjen vurderinger med stjerner og kommentar
+• Legge igjen vurderinger med stjerner og kommentar
 
-Bla gjennom andres vurderinger
+• Bla gjennom andres vurderinger
 
-Under utvikling
+** Under utvikling **
 
 Google Auth (kommer snart 🚀)
 
@@ -19,12 +19,12 @@ Litt mer design og funksjonalitet
 
 Teknologi
 
-Frontend: React, TypeScript, Tailwind CSS, Radix UI
+• Frontend: React, TypeScript, Tailwind CSS, Radix UI
 
-Backend: C#, .NET
+• Backend: C#, .NET
 
-Database: PostgreSQL
+• Database: PostgreSQL
 
-Hosting: Railway
+• Hosting: Railway
 
 Prosjektet er fortsatt under utvikling, men jeg deler det her for å vise prosessen og hvordan jeg bygger det opp underveis.
