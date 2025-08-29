@@ -1,59 +1,20 @@
-# Bestetreningssenter
+# Bestetreningssenter 🏋️‍♂️
 
-## Project info
+Dette er et hobbyprosjekt jeg lager hvor brukere kan vurdere treningssentre i Oslo.
+Målet er å gjøre det enklere å finne et treningssenter som faktisk passer til egne behov – litt som en samling av erfaringer og tilbakemeldinger fra folk som allerede trener der.
 
-This is a personal project for reviewing training centers.
+Foreløpig kan man:
 
-## How can I edit this code?
+Se informasjon om hvert treningssenter
 
-You can work locally using your preferred IDE.
+Legge igjen vurderinger med stjerner og kommentar
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+Bla gjennom andres vurderinger
 
-Follow these steps:
+Det som gjenstår:
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+Google Auth (på vei inn 🚀)
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+Litt finpuss på design og funksjonalitet
 
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
-```
-
-**Edit a file directly in GitHub**
-
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
-
-**Use GitHub Codespaces**
-
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
-
-## What technologies are used for this project?
-
-This project is built with:
-
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-You can deploy this project using platforms like Vercel, Netlify, or GitHub Pages. Refer to their documentation for deployment steps.
-
-## Can I connect a custom domain?
-
-Yes! Most hosting providers allow you to connect a custom domain. Check your provider's documentation for a step-by-step guide.
+Prosjektet er fortsatt under utvikling, men jeg legger det ut her for å vise prosessen og hvordan jeg bygger det opp underveis.
