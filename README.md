@@ -1,7 +1,7 @@
 # Bestetreningssenter 🏋️‍♂️
 
 Dette er et hobbyprosjekt jeg lager hvor brukere kan vurdere treningssentre i Oslo.
-Målet er å gjøre det enklere å finne et treningssenter som faktisk passer til egne behov – litt som en samling av erfaringer og tilbakemeldinger fra folk som allerede trener der.
+Målet er å gjøre det enklere å finne et treningssenter som faktisk passer til egne behov, litt som en samling av erfaringer og tilbakemeldinger fra folk som allerede trener der.
 
 Foreløpig kan man:
 
